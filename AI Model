@@ -1,0 +1,38 @@
+import pandas as pd
+
+# Read dataset
+dataset = pd.read_excel("diabetes.xlsx")
+
+# Split dataset into X and Y
+# X = features
+# Y = target (diabetes outcome)
+X = dataset.drop("Outcome", axis=1).values
+Y = dataset["Outcome"].values
+
+# Handle missing values
+from sklearn.impute import SimpleImputer
+
+imputer = SimpleImputer(strategy="mean")
+X = imputer.fit_transform(X)
+
+# Split dataset: 80% training, 20% testing
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(
+    X, Y,
+    test_size=0.2,
+    random_state=0
+)
+
+# Train Gaussian Naive Bayes model
+from sklearn.naive_bayes import GaussianNB
+
+gnb = GaussianNB()
+y_pred = gnb.fit(x_train, y_train).predict(x_test)
+
+# Calculate accuracy
+from sklearn.metrics import accuracy_score
+
+accuracy = accuracy_score(y_test, y_pred)
+
+print("Diabetes Prediction Accuracy:", accuracy)
